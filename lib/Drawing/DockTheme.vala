@@ -40,9 +40,12 @@ namespace Plank
 		[Description(nick = "item-padding", blurb = "The padding between items on the dock, in tenths of a percent of IconSize.")]
 		public double ItemPadding { get; set; }
 		
-		[Description(nick = "indicator-size", blurb = "The size of item indicators, in tenths of a percent of IconSize.")]
+		[Description(nick = "indicator-size", blurb = "The width of item indicators, in tenths of a percent of IconSize.")]
 		public double IndicatorSize { get; set; }
 		
+		[Description(nick = "indicator-height", blurb = "The height of item indicators, in pixels.")]
+		public int IndicatorHeight { get; set; }
+
 		[Description(nick = "icon-shadow-size", blurb = "The size of the icon-shadow behind every item, in tenths of a percent of IconSize.")]
 		public double IconShadowSize { get; set; }
 		
@@ -114,7 +117,8 @@ namespace Plank
 			TopPadding = -11.0;
 			BottomPadding = 2.5;
 			ItemPadding = 2.5;
-			IndicatorSize = 5.0;
+			IndicatorSize = 4.0;
+			IndicatorHeight = 2;
 			IconShadowSize = 1.0;
 			UrgentBounceHeight = 5.0 / 3.0;
 			LaunchBounceHeight = 0.625;
@@ -210,9 +214,12 @@ namespace Plank
 		 */
 		public Surface create_indicator (int size, Color color, Surface model)
 		{
-			Logger.verbose ("DockTheme.create_indicator (size = %i)", size);
+
+			var indicator_height = IndicatorHeight;
+
+			Logger.verbose ("DockTheme.create_indicator (size = %i, height = %i)", size, indicator_height);
 			
-			var surface = new Surface.with_surface (size, size, model);
+			var surface = new Surface.with_surface (size, indicator_height+1, model);
 			surface.clear ();
 			
 			if (size <= 0)
@@ -220,22 +227,19 @@ namespace Plank
 			
 			unowned Cairo.Context cr = surface.Context;
 			
-			var x = size / 2;
-			var y = x;
+			var indicator_width = size;
+
+			var x = 0;
+			var y = 0;
 			
 			cr.move_to (x, y);
-			cr.arc (x, y, size / 2, 0, Math.PI * 2);
+			cr.rel_line_to (indicator_width, 0);
+			cr.rel_line_to (0, indicator_height);
+			cr.rel_line_to (-indicator_width, 0);
+			cr.rel_line_to (0, -indicator_height);
 			cr.close_path ();
 			
-			var rg = new Cairo.Pattern.radial (x, y, 0, x, y, size / 2);
-			rg.add_color_stop_rgba (0, 1, 1, 1, 1);
-			rg.add_color_stop_rgba (0.1, color.red, color.green, color.blue, 1);
-			rg.add_color_stop_rgba (0.2, color.red, color.green, color.blue, 0.6);
-			rg.add_color_stop_rgba (0.25, color.red, color.green, color.blue, 0.25);
-			rg.add_color_stop_rgba (0.5, color.red, color.green, color.blue, 0.15);
-			rg.add_color_stop_rgba (1.0, color.red, color.green, color.blue, 0.0);
-			
-			cr.set_source (rg);
+			cr.set_source_rgba (IndicatorColor.red, IndicatorColor.green, IndicatorColor.blue, IndicatorColor.alpha);
 			cr.fill ();
 			
 			return surface;
@@ -563,6 +567,11 @@ namespace Plank
 					IndicatorSize = MIN_INDICATOR_SIZE;
 				else if (IndicatorSize > MAX_INDICATOR_SIZE)
 					IndicatorSize = MAX_INDICATOR_SIZE;
+				break;
+
+			case "IndicatorHeight":
+				if (IndicatorHeight < 1)
+					IndicatorHeight = 1;
 				break;
 			
 			case "IconShadowSize":

@@ -76,8 +76,8 @@ namespace Plank
 		[Description(nick = "fill-end-color", blurb = "The ending color (RGBA) of the fill gradient.")]
 		public Color FillEndColor { get; set; }
 		
-		[Description(nick = "inner-stroke-color", blurb = "The color (RGBA) of the inner stroke.")]
-		public Color InnerStrokeColor { get; set; }
+		[Description(nick = "indicator-color", blurb = "The color (RGBA) of the indicator.")]
+		public Color IndicatorColor { get; set; }
 		
 		File? theme_folder;
 		Gtk.StyleContext style_context;
@@ -135,15 +135,15 @@ namespace Plank
 		 */
 		protected override void reset_properties ()
 		{
-			TopRoundness    = 6;
-			BottomRoundness = 6;
+			TopRoundness    = 0;
+			BottomRoundness = 0;
 			
-			LineWidth = 1;
+			LineWidth = 3;
 			
 			OuterStrokeColor = { 0.1647, 0.1647, 0.1647, 1.0 };
 			FillStartColor   = { 0.1647, 0.1647, 0.1647, 1.0 };
 			FillEndColor     = { 0.3176, 0.3176, 0.3176, 1.0 };
-			InnerStrokeColor = { 1.0, 1.0, 1.0, 1.0 };
+			IndicatorColor   = { 0, 0, 0, 1.0 };
 		}
 		
 		/**
@@ -217,10 +217,10 @@ namespace Plank
 			cr.stroke ();
 			
 			gradient = new Cairo.Pattern.linear (0, 2 * LineWidth, 0, height - 2 * LineWidth - bottom_offset);
-			gradient.add_color_stop_rgba (0, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.5);
-			gradient.add_color_stop_rgba ((TopRoundness > 0 ? TopRoundness : LineWidth) / (double) height, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.12);
-			gradient.add_color_stop_rgba (1 - (BottomRoundness > 0 ? BottomRoundness : LineWidth) / (double) height, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.08);
-			gradient.add_color_stop_rgba (1, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.19);
+			//  gradient.add_color_stop_rgba (0, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.5);
+			//  gradient.add_color_stop_rgba ((TopRoundness > 0 ? TopRoundness : LineWidth) / (double) height, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.12);
+			//  gradient.add_color_stop_rgba (1 - (BottomRoundness > 0 ? BottomRoundness : LineWidth) / (double) height, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.08);
+			//  gradient.add_color_stop_rgba (1, InnerStrokeColor.red, InnerStrokeColor.green, InnerStrokeColor.blue, 0.19);
 			
 			cr.set_source (gradient);
 			draw_inner_rect (cr, width, height);
@@ -365,6 +365,9 @@ namespace Plank
 				break;
 			
 			case "InnerStrokeColor":
+				break;
+
+			case "IndicatorColor":
 				break;
 			}
 		}

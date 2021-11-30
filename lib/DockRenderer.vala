@@ -808,9 +808,9 @@ namespace Plank
 			var opacity = double.min (1, active_time / (double) (theme.ActiveTime * 1000));
 			if ((item.State & ItemState.ACTIVE) == 0)
 				opacity = 1 - opacity;
-			if (opacity > 0) {
-				theme.draw_active_glow (item_buffer, background_rect, draw_value.background_region, item.AverageIconColor, opacity, position);
-			}
+			//  if (opacity > 0) {
+			//  	theme.draw_active_glow (item_buffer, background_rect, draw_value.background_region, item.AverageIconColor, opacity, position);
+			//  }
 			
 			// draw the icon
 			if (window_scale_factor > 1) {
@@ -962,21 +962,9 @@ namespace Plank
 				break;
 			}
 			
-			if (indicator == IndicatorState.SINGLE) {
-				cr.set_source_surface (indicator_surface.Internal, x, y);
-				cr.paint ();
-			} else {
-				var x_offset = 0.0, y_offset = 0.0;
-				if (position_manager.is_horizontal_dock ())
-					x_offset = position_manager.IconSize / 16.0;
-				else
-					y_offset = position_manager.IconSize / 16.0;
-				
-				cr.set_source_surface (indicator_surface.Internal, x - x_offset, y - y_offset);
-				cr.paint ();
-				cr.set_source_surface (indicator_surface.Internal, x + x_offset, y + y_offset);
-				cr.paint ();
-			}
+
+			cr.set_source_surface (indicator_surface.Internal, x, y);
+			cr.paint ();
 		}
 		
 		void draw_urgent_glow (DockItem item, Cairo.Context cr, int64 frame_time)
